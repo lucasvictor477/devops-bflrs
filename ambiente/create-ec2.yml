@@ -49,8 +49,3 @@
              volume_size: 8
              
       register: ec2      
-      
-        deployable: true
-        wait: yes
-        state: running
-      register: ec2_result
