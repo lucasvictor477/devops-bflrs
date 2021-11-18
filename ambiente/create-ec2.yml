@@ -22,19 +22,34 @@
       import_tasks: setup-python.yml   
 
     - name: Provisionamento de instância
-      community.aws.ec2_instance:
-        region: "{{ aws_region }}"
-        vpc_subnet_id: "{{ subnet_id }}"
-        name: "{{ instance_name }}"
-        key_name: "{{ access_key }}"
-        security_group: "{{ security_group_name }}"
-        instance_type: "{{ instance_type }}"
-        image_id: "{{ image_id }}"      
-        network:
-          assign_public_ip: true        
-        tags:
-          sistema: "{{ project_name }}"
-          ambiente: "production"
+      ec2:
+         key_name: "{{ access_key }}"
+         groups: "{{ security_group_name }}"
+         instance_type: "{{ instance_type }}"
+         image: "{{ image_id }}"
+         wait: true
+         region: "{{ aws_region }}"
+         assign_public_ip: yes
+         vpc_subnet_id: "{{ subnet_id }}"
+         AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+         AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+         AWS_SESSION_TOKEN: "{{ lookup('env', 'AWS_SESSION_TOKEN') }}"
+
+         user_data: |
+            #!/bin/bash -xe
+            /bin/sed -ri '/Defaults[ ]{1,}requiretty/d' -i /etc/sudoers
+         termination_protection: yes
+
+         instance_tags:
+             Name: "new-server-name"
+
+         volumes:
+           - device_name: /dev/sda1
+             volume_type: gp2
+             volume_size: 8
+             
+      register: ec2      
+      
         deployable: true
         wait: yes
         state: running
