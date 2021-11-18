@@ -35,5 +35,4 @@
     tags:
           sistema: "{{ project_name }}"
           ambiente: "production"
-        state: running
       register: ec2_result    
