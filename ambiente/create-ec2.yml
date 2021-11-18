@@ -20,7 +20,7 @@
   tasks:
     - name: configura bibliotecas Python
       import_tasks: setup-python.yml  
-- name: Provisionamento de instância
+- name: "Provisionamento de instância"
   ec2:
       community.aws.ec2_instance:
         region: "{{ aws_region }}"
